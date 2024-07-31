@@ -19,27 +19,49 @@
 </head>
 <body>
     <h1>Tic-Tac-Toe 2.0</h1>
-    <table>
+    <table id="game-board">
         {% for row in board %}
         <tr>
             {% for cell in row %}
-            <td>{{ cell }}</td>
+            <td onclick="makeMove({{ forloop.parentloop.counter0 }}, {{ forloop.counter0 }})">{{ cell }}</td>
             {% endfor %}
         </tr>
         {% endfor %}
     </table>
+    <p id="message">{{ message }}</p>
     <script>
-        const cells = document.querySelectorAll('td');
-        let currentPlayer = 'X';
-
-        cells.forEach(cell => {
-            cell.addEventListener('click', () => {
-                if (cell.textContent === ' ') {
-                    cell.textContent = currentPlayer;
-                    currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
                 }
+            }
+            return cookieValue;
+        }
+
+        const csrftoken = getCookie('csrftoken');
+
+        function makeMove(row, col) {
+            fetch('/make_move/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken
+                },
+                body: JSON.stringify({ row: row, col: col })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.querySelector('#game-board').innerHTML = data.board_html;
+                document.getElementById('message').textContent = data.message;
             });
-        });
+        }
     </script>
 </body>
 </html>
