@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tic-Tac-Toe 2.0</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 200px;
+            height: 200px;
+        }
+        td {
+            border: 1px solid black;
+            text-align: center;
+            font-size: 2em;
+            width: 66px;
+            height: 66px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Tic-Tac-Toe 2.0</h1>
+    <table>
+        {% for row in board %}
+        <tr>
+            {% for cell in row %}
+            <td>{{ cell }}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+    <script>
+        const cells = document.querySelectorAll('td');
+        let currentPlayer = 'X';
+
+        cells.forEach(cell => {
+            cell.addEventListener('click', () => {
+                if (cell.textContent === ' ') {
+                    cell.textContent = currentPlayer;
+                    currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
